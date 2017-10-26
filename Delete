@@ -1,0 +1,31 @@
+public class Delete
+    {
+        /// <summary>
+        /// Sitecore Action Item triggers this method.
+        /// </summary>
+        /// <param name="args">The Workflow Arguments of the item in workflow</param>
+        public void Process(WorkflowPipelineArgs args)
+        {
+            Item item = args.DataItem;
+            if (item == null)
+            {
+                SheerResponse.Alert("No Item was provided in the workflow command for Deleting. Aborting operation.");
+                return;
+            }
+
+           
+            try
+            {
+                using (new Sitecore.SecurityModel.SecurityDisabler())
+                {
+                    item.Delete();
+                }
+            }
+            catch (Exception e)
+            {
+                args.AbortPipeline();
+                Log.Error("There was a problem in trying to delete an item.", e, this);
+                SheerResponse.Alert("The item could not be deleted. Aborting and exiting");
+            }
+        }
+    }
